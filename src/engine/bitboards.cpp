@@ -1,6 +1,7 @@
 #include "bitboards.h"
 #include "types.h"
 #include <cassert>
+#include <cstdint>
 #include <iostream>
 #include <vector>
 
@@ -66,6 +67,62 @@ inline bitboard_t shift(const bitboard_t &bitboard, char shift) {
     } else {
         return bitboard >> (-shift);
     }
+}
+
+uint8_t count_ones(bitboard_t bb) {
+    uint8_t ones = 0;
+
+    for (uint8_t idx = 0; idx < 64; ++idx) {
+        ones += (bb >> idx) & 1;
+    }
+
+    return ones;
+}
+
+// for sliding pieces only (for now ?)
+bitboard_t relevant_blockers(const PieceType pieceType, const Square square) {
+    const std::vector<std::vector<char>> bishopDeltas = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+    const std::vector<std::vector<char>> rookDeltas = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    const std::vector<std::vector<char>> &deltas = (pieceType == PieceType::Bishop) ? bishopDeltas : rookDeltas;
+    bitboard_t blockers = Bitboard::empty();
+    Square current, next;
+
+    for (const auto &delta : deltas) {
+        current = square;
+
+        while (is_valid_square(next = square_delta(current, delta)) && distance(current, next) <= 2) { // check the next square because border squares are irrelevant
+            blockers |= Bitboard::from_square(current);
+            current = next;
+        }
+    }
+
+    blockers &= ~Bitboard::from_square(square); // remove initial square
+
+    return blockers;
+}
+
+bitboard_t moves(const PieceType pieceType, const Square square, const bitboard_t blockers) {
+    const std::vector<std::vector<char>> bishopDeltas = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+    const std::vector<std::vector<char>> rookDeltas = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    const std::vector<std::vector<char>> &deltas = (pieceType == PieceType::Bishop) ? bishopDeltas : rookDeltas;
+    bitboard_t moves = Bitboard::empty();
+    Square current, next;
+
+    for (auto &delta : deltas) {
+        current = square;
+
+        while (is_valid_square(next = square_delta(current, delta)) && distance(current, next) <= 2) {
+            current = next;
+            bitboard_t squarebb = Bitboard::from_square(current);
+            moves |= squarebb;
+
+            if (blockers & squarebb) {
+                break;
+            }
+        }
+    }
+
+    return moves;
 }
 
 std::vector<Square> serialize(const bitboard_t &bitboard) {

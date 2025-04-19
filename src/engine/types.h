@@ -4,6 +4,7 @@
 #include <cassert>
 #include <string>
 #include <sstream>
+#include <vector>
 
 namespace Engine {
 
@@ -127,6 +128,14 @@ std::string square_to_string(Square square);
 Square square_from_string(std::string squareName);
 */
 
+inline Rank rank_from_square(Square s) {
+    return Rank(s / 8);
+}
+
+inline File file_from_square(Square s) {
+    return File(s % 8);
+}
+
 static const std::string pieceChars = ".pnbrqk";
 
 inline Piece piece_from_char(unsigned char pieceChar) {
@@ -198,6 +207,28 @@ inline Square square_from_string(std::string squareName) {
     assert(is_numerical(squareName[1]));
 
     return Square((to_lower_case(squareName[0]) - 'a') + (squareName[1] - '1') * 8);
+}
+
+inline bool is_valid_square(Square square) {
+    return (square < Square::SquareNumber) && (square >= Square::A1);
+}
+
+inline Square square_delta(Square square, const std::vector<char> &delta) {
+    return Square(square + delta[0] + delta[1] * 8);
+}
+
+#define ABSS(x, y) ((x) > (y) ? ((x) - (y)) : ((y) - (x)))
+
+inline unsigned int distance(File f1, File f2) {
+    return ABSS(f1, f2);
+}
+
+inline unsigned int distance(Rank r1, Rank r2) {
+    return ABSS(r1, r2);
+}
+
+inline unsigned int distance(Square sq1, Square sq2) {
+    return distance(file_from_square(sq1), file_from_square(sq2)) + distance(rank_from_square(sq1), rank_from_square(sq2));
 }
 
 } // namespace engine
