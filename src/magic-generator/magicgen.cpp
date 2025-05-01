@@ -36,11 +36,6 @@ bitboard_t relevant_blockers(const PieceType pieceType, const Square square) {
     return blockers;
 }
 
-typedef struct {
-    MagicEntry entry;
-    size_t tableSize;
-} MagicResult;
-
 MagicResult find_magic(const PieceType pieceType, const Square square, std::mt19937_64 &mt) {
     MagicEntry entry;
     uint8_t indexBits;
@@ -64,8 +59,6 @@ MagicResult find_magic(const PieceType pieceType, const Square square, std::mt19
 }
 
 void find_all_magics(const PieceType pieceType, std::mt19937_64 &mt) {
-    std::cout << "Finding all magic...\n" << std::endl;
-
     size_t totalSize = 0;
 
     std::cout << "Engine::Bitboard::MagicEntry " << (pieceType == PieceType::Bishop ? "bishop" : "rook") << "Magics[Engine::Square::SquareNumber] = {" << std::endl;

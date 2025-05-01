@@ -17,6 +17,11 @@ typedef struct {
     std::vector<bitboard_t> attacks;
 } MagicAttacks;
 
+typedef struct {
+    MagicEntry entry;
+    size_t tableSize;
+} MagicResult;
+
 enum PieceType {
     Bishop,
     Rook,
