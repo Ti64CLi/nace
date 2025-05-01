@@ -18,11 +18,6 @@ typedef struct {
     uint32_t offset;
 } MagicEntry;
 
-typedef struct {
-    std::vector<MagicEntry> entries;
-    std::vector<bitboard_t> attacks;
-} MagicAttacks;
-
 Square lsb(bitboard_t bb);
 Square msb(bitboard_t bb);
 
@@ -41,10 +36,6 @@ bitboard_t invert(const bitboard_t &bitboard);
 bitboard_t shift(const bitboard_t &bitboard, char shift);
 
 uint8_t count_ones(bitboard_t bb);
-
-bitboard_t relevant_blockers(const PieceType pieceType, const Square square);
-bitboard_t moves(const PieceType pieceType, const Square square, const bitboard_t blockers);
-
 std::vector<Square> serialize(const bitboard_t &bitboard);
 
 void display(const bitboard_t &bitboard, const std::string &bitboardName, const char &zeroChar, const char &oneChar);
