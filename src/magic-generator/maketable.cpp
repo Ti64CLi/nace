@@ -38,7 +38,7 @@ std::optional<std::vector<bitboard_t>> make_table(PieceType pieceType, Square sq
 
     for (;;) { // iterate over all subset of entry.mask
         bitboard_t moves = generate_moves(pieceType, square, subset); // generate all possible moves with to the 'subset' blockers
-        uint16_t tableIndex = magic_index(entry, subset); // get table index from magic number and current blockers subset
+        uint32_t tableIndex = magic_index(entry, subset); // get table index from magic number and current blockers subset
 
         if (table[tableIndex] == 0ULL) { // no entry yet
             table[tableIndex] = moves;
