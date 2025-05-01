@@ -60,14 +60,15 @@ MagicResult find_magic(const PieceType pieceType, const Square square, std::mt19
 
 void find_all_magics(const PieceType pieceType, std::mt19937_64 &mt) {
     size_t totalSize = 0;
+    std::string pt = (pieceType == PieceType::Bishop ? "bishop" : "rook");
 
-    std::cout << "Engine::Bitboard::MagicEntry " << (pieceType == PieceType::Bishop ? "bishop" : "rook") << "Magics[Engine::Square::SquareNumber] = {" << std::endl;
+    std::cout << "constexpr Engine::Bitboard::MagicEntry " << pt << "Magics[Engine::Square::SquareNumber] = {" << std::endl;
 
     for (Square square = Square::A1; square < Square::SquareNumber; square = Square(square + 1)) {
         MagicResult result = find_magic(pieceType, square, mt);
         
-        std::cout   << "\t{.mask = " << std::hex << std::setfill('0') << std::setw(16) << result.entry.mask 
-                    << ", .magic = " << std::setfill('0') << std::setw(16) << result.entry.magic 
+        std::cout   << "\t{.mask = 0x" << std::hex << std::setfill('0') << std::setw(16) << result.entry.mask 
+                    << ", .magic = 0x" << std::setfill('0') << std::setw(16) << result.entry.magic 
                     << ", .shift = " << std::dec << (int)result.entry.shift
                     << ", .offset = " << totalSize
                     << "}," << std::endl;
@@ -76,6 +77,8 @@ void find_all_magics(const PieceType pieceType, std::mt19937_64 &mt) {
     }
 
     std::cout << "};" << std::endl;
+
+    std::cout << "constexpr size_t " << pt << "MovesTotalSize = " << totalSize << ";\n" << std::endl;
 }
 
 bitboard_t string2bb(const std::string &s) {
